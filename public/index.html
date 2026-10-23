@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>想法搜索 · GitHub</title>
+<link rel="stylesheet" href="/style.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔎</text></svg>">
+</head>
+<body>
+
+<div class="top">
+  <div class="brand">想法搜索 <span>·</span> GitHub</div>
+  <div class="spacer"></div>
+  <div class="badge" id="quotaBadge">配额 …</div>
+  <button class="iconbtn" id="btnSettings" title="Token 设置">设置</button>
+</div>
+
+<div class="shell">
+  <main>
+    <div class="search">
+      <input id="q" type="text" autocomplete="off" spellcheck="false"
+             placeholder="说你要什么：轻量的 python 库，把网页转成 markdown">
+      <button class="go" id="go">搜索</button>
+      <div class="suggest" id="suggest" hidden></div>
+    </div>
+
+    <div class="filters">
+      <label>语言 <select id="lang">
+        <option value="">自动</option>
+        <option>Python</option><option>JavaScript</option><option>TypeScript</option>
+        <option>Go</option><option>Rust</option><option>C</option><option>C++</option>
+        <option>C#</option><option>Java</option><option>Kotlin</option><option>Swift</option>
+        <option>PHP</option><option>Shell</option><option>Lua</option><option>Dart</option>
+      </select></label>
+      <label>最低 star <input id="minStars" type="number" min="0" value="0"></label>
+      <label>更新 <select id="updated">
+        <option value="0">不限</option>
+        <option value="30">1 个月内</option>
+        <option value="180">半年内</option>
+        <option value="365">一年内</option>
+        <option value="1095">三年内</option>
+      </select></label>
+      <label>排序 <select id="sortMode">
+        <option value="relevance">相关度</option>
+        <option value="stars">星标</option>
+        <option value="recent">最近更新</option>
+        <option value="trending">上升期</option>
+      </select></label>
+      <label class="chk"><input id="archived" type="checkbox"> 含归档</label>
+      <label class="chk"><input id="license" type="checkbox"> 仅带许可证</label>
+      <label>条数 <input id="limit" type="number" min="5" max="100" value="30"></label>
+    </div>
+
+    <div id="planBox"></div>
+    <div class="status" id="status"></div>
+    <div id="out"></div>
+  </main>
+
+  <aside class="rail">
+    <section>
+      <h4>历史</h4>
+      <div id="hist"></div>
+    </section>
+    <section>
+      <h4>收藏</h4>
+      <div id="favs"></div>
+    </section>
+    <section>
+      <h4>提示</h4>
+      <div style="font-size:12px;color:var(--dim);line-height:1.8">
+        <code class="mono">/</code> 聚焦输入 · <code class="mono">J/K</code> 上下选 · <code class="mono">Enter</code> 打开<br>
+        勾掉的检索式不参与；可以改检索式后重跑。<br>
+        未认证 10 次/分，配 token 变 30 次/分且支持代码搜索。
+      </div>
+    </section>
+  </aside>
+</div>
+
+<div class="foot">github-finder v2 · SSE 流式 · 多路合并去重 · 每条结果带命中理由</div>
+
+<dialog id="dlg">
+  <h3>GitHub Token</h3>
+  <p>写进 <span class="mono" id="cfgPath">~/.github-finder.json</span>，重启不用，改完立刻生效。</p>
+  <input id="tokenInput" type="password" placeholder="ghp_… 或 github_pat_…">
+  <div class="row">
+    <button id="btnClear">清空</button>
+    <button id="btnClose">关闭</button>
+    <button class="primary" id="btnSave">保存</button>
+  </div>
+</dialog>
+
+<div class="toast" id="toast"></div>
+<script src="/app.js"></script>
+</body>
+</html>

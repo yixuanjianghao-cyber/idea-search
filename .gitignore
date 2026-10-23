@@ -1,0 +1,15 @@
+.venv/
+__pycache__/
+*.pyc
+build/
+dist/
+artifacts/
+*.log
+.env
+.env.*
+!.env.example
+*.pem
+*.pfx
+*.p12
+.github-finder*.json
+node_modules/

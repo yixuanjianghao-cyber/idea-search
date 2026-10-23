@@ -1,0 +1,18 @@
+{
+  "name": "github-finder",
+  "version": "2.8.0",
+  "private": true,
+  "license": "MIT",
+  "type": "module",
+  "description": "说一句中文想法，搜到对应的 GitHub 项目：流式多路检索 + 合并去重打分 + 中文生态分栏",
+  "scripts": {
+    "start": "node server.mjs",
+    "cli": "node cli.mjs",
+    "test": "node test/selftest.mjs && node test/ui-check.mjs && node test/analyze_unit.mjs && node --test test/regression.mjs test/analyze_integration.mjs test/discover_api.mjs test/trending_api.mjs test/launch_plan.mjs test/config_routes.mjs test/network.mjs",
+    "desktop": "python desktop/run.py",
+    "test:ui": "python test/desktop_regression.py"
+  },
+  "engines": {
+    "node": ">=22.21.0"
+  }
+}
