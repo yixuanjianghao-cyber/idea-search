@@ -14,7 +14,7 @@
 
 一次改动聚焦一个问题，说明行为变化与验证方式。不要提交 `.venv`、`dist`、`build`、用户配置、日志、Token 或 API Key。使用离线样例验证网络逻辑，不把个人账号凭据写入测试。
 
-运行 `npm test`；涉及桌面交互时运行 `.\.venv\Scripts\python.exe test\desktop_regression.py`，并运行与改动相关的 Python 测试。完整构建检查由 `build.ps1` 执行，CI 也会运行离线测试。
+运行 `npm test`；涉及桌面交互时运行 `.\.venv\Scripts\python.exe test\desktop_regression.py`，并运行与改动相关的 Python 测试。完整构建检查由 `build.ps1` 执行，仓库提供离线测试工作流模板，启用方式见 `.github/workflow-templates/README.md`。
 
 部署逻辑应从已验证的仓库文件识别入口，不执行 README 中任意文本命令，不覆盖未由本应用管理的目录。AI 输出与规则推断需保留来源及不确定性提示。
 
