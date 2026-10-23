@@ -14,7 +14,7 @@
 
 ## 下载与开始
 
-在仓库的 Releases 页面下载 Windows x64 ZIP，**完整解压**后运行 `IdeaSearch/IdeaSearch.exe`。不要只复制 EXE。当前版本 2.8.0，目标平台为 Windows 10/11 x64。
+在 [Releases](https://github.com/yixuanjianghao-cyber/idea-search/releases) 页面下载 Windows x64 ZIP，**完整解压**后运行 `IdeaSearch/IdeaSearch.exe`。不要只复制 EXE。当前版本 2.8.0，目标平台为 Windows 10/11 x64。
 
 第一次使用可以直接搜索公开项目；GitHub Token 用于提高 API 配额，AI 问答需要单独配置模型。部署第三方项目可能需要 Git、Docker、Node 或 Python，并可能需要服务账号、数据库和 API Key。
 
