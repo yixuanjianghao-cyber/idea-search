@@ -1,6 +1,6 @@
 {
   "name": "github-finder",
-  "version": "2.8.0",
+  "version": "2.8.2",
   "private": true,
   "license": "MIT",
   "type": "module",

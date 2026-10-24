@@ -7,7 +7,7 @@ from datetime import datetime
 from zipfile import ZipFile, ZIP_DEFLATED
 
 ROOT = Path(__file__).resolve().parent.parent
-FILES = ('README.md', 'CHANGELOG.md', 'CONTRIBUTING.md', 'SECURITY.md', 'LICENSE',
+FILES = ('README.md', 'AGENTS.md', 'CHANGELOG.md', 'CONTRIBUTING.md', 'SECURITY.md', 'LICENSE',
          'THIRD_PARTY_NOTICES.md', '开始使用.txt', '.gitignore', 'package.json',
          'requirements.txt', 'requirements-build.txt', 'build.ps1', 'server.mjs',
          'config.mjs', 'cli.mjs')
@@ -33,7 +33,8 @@ def main():
             bundle.write(path, 'IdeaSearch/' + path.relative_to(ROOT).as_posix())
     digest = hashlib.sha256(archive.read_bytes()).hexdigest()
     archive.with_suffix('.zip.sha256').write_text(digest + '\n', encoding='ascii')
-    print(json.dumps({'archive': str(archive), 'files': len(paths), 'sha256': digest}, ensure_ascii=False))
+    # ASCII JSON also works when Windows' console code page differs from UTF-8.
+    print(json.dumps({'archive': str(archive), 'files': len(paths), 'sha256': digest}, ensure_ascii=True))
 
 
 if __name__ == '__main__':

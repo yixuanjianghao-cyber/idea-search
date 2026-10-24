@@ -80,7 +80,7 @@ try {
     $env:GHF_PORT = $oldPort
     $env:QT_QPA_PLATFORM = $oldQt
 }
-$zip = Join-Path $out 'IdeaSearch-2.8.0-win64.zip'
+$zip = Join-Path $out 'IdeaSearch-2.8.2-win64.zip'
 Compress-Archive -LiteralPath $appDir -DestinationPath $zip
 & $Python scripts/verify_release.py $zip
 if ($LASTEXITCODE -ne 0) { throw 'Relocated release verification failed' }

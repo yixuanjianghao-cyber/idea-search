@@ -59,7 +59,7 @@ def http_json(path: str, data: dict | None = None, timeout: float = 5.0):
 def health():
     try:
         data = http_json("/api/health", timeout=1.0)
-        return data if data.get("app") == "idea-search" and data.get("version") == "2.8.0" else None
+        return data if data.get("app") == "idea-search" and data.get("version") == "2.8.2" else None
     except Exception:
         return None
 
