@@ -33,7 +33,8 @@ def main():
             bundle.write(path, 'IdeaSearch/' + path.relative_to(ROOT).as_posix())
     digest = hashlib.sha256(archive.read_bytes()).hexdigest()
     archive.with_suffix('.zip.sha256').write_text(digest + '\n', encoding='ascii')
-    print(json.dumps({'archive': str(archive), 'files': len(paths), 'sha256': digest}, ensure_ascii=False))
+    # ASCII JSON also works when Windows' console code page differs from UTF-8.
+    print(json.dumps({'archive': str(archive), 'files': len(paths), 'sha256': digest}, ensure_ascii=True))
 
 
 if __name__ == '__main__':
