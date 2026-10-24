@@ -2,6 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { compile } from '../lib/intent.mjs';
 import { dedupe, applyFilters, mergeAndRank } from '../lib/rank.mjs';
+import { find } from '../lib/search.mjs';
 import { usageSteps, deployScript } from '../lib/deployment.mjs';
 
 test('English word boundaries survive; text search is not TypeScript', () => {
@@ -23,6 +24,63 @@ test('manual language overrides detected language before retrieval', () => {
   assert.equal(p.lang, 'Rust');
   assert.ok(p.variants.some(v => v.q.includes('language:Rust')));
   assert.ok(p.variants.every(v => !v.q.includes('language:Python')));
+});
+
+test('DSH desktop pet intent retains its purpose and prioritizes scoped bilingual queries', () => {
+  for (const query of ['dsh桌宠插件', 'DSH 桌面宠物', 'DeepSeek Harness 桌宠插件']) {
+    const p = compile(query);
+    assert.equal(p.primary, 'pet');
+    assert.ok(p.brands.includes('dsh'));
+    assert.ok(p.variants[0].q.includes('dsh pet'));
+    assert.ok(p.variants.some(v => /dsh 桌宠|dsh 桌面宠物/.test(v.q)));
+    assert.ok(p.variants.some(v => v.q.includes('deepseek-harness pet')));
+    assert.ok(p.variants.every(v => !v.q.includes('stars:>20')));
+    assert.ok(p.variants.length <= 4);
+  }
+  assert.equal(compile('桌宠').primary, 'pet');
+  assert.deepEqual(compile('桌宠').brands, []);
+  assert.deepEqual(compile('mydshboard 桌宠').brands, []);
+});
+
+test('native pet recall has no hidden star floor and preserves requested constraints', () => {
+  const p = compile('最新高星 python 桌宠');
+  const native = p.variants.find(v => v.kind === 'native');
+  assert.ok(native);
+  assert.match(native.q, /language:Python/);
+  assert.ok(!compile('桌宠').variants.some(v => /stars:/.test(v.q)));
+  const scoped = compile('DSH 桌宠', { lang: 'TypeScript', maxQueries: 2 });
+  assert.equal(scoped.variants.length, 2);
+  assert.ok(scoped.variants.every(v => v.q.includes('language:TypeScript')));
+});
+
+test('low-star ecosystem pets rank above popular generic pets and unrelated DSH plugins', () => {
+  const p = compile('dsh桌宠插件');
+  const base = { topics: [], size: 80, issues: 0, license: 'MIT', lang: 'JavaScript', pushed_at: new Date().toISOString() };
+  const pet = { ...base, full_name: 'example/dsh-dpet', description: 'DSH 的 2D/3D 智能桌宠插件', stars: 1 };
+  const generic = { ...base, full_name: 'other/desktop-pet', description: 'Popular virtual desktop pet application', stars: 200000, topics: ['desktop-pet', 'virtual-pet', 'desktop'] };
+  const unrelated = { ...base, full_name: 'other/dsh-plugin', description: 'DSH plugin for databases and SQL', stars: 200000 };
+  const result = mergeAndRank([{ label: '生态', items: [generic, unrelated, pet] }], p);
+  assert.equal(result.results[0].full_name, pet.full_name);
+  assert.deepEqual(result.results[0].why.ecosystemHits, ['dsh']);
+  assert.ok(!mergeAndRank([{ label: '生态', items: [pet] }], p, { minStars: 20 }).results.length);
+});
+
+test('end-to-end DSH pet retrieval asks for pet candidates instead of only generic plugins', async () => {
+  const original = globalThis.fetch;
+  const seen = [];
+  globalThis.fetch = async url => {
+    const q = new URL(url).searchParams.get('q');
+    seen.push(q);
+    const specific = /dsh pet|dsh 桌宠|deepseek-harness pet/.test(q);
+    const items = specific ? [{ full_name: 'fixture/dsh-pet', description: 'DSH 桌宠插件', stargazers_count: 2, size: 80 }] : [];
+    return new Response(JSON.stringify({ total_count: items.length, items }));
+  };
+  try {
+    const result = await find('dsh桌宠插件');
+    assert.equal(result.results[0].full_name, 'fixture/dsh-pet');
+    assert.ok(seen.some(q => q.includes('dsh pet')));
+    assert.ok(seen.every(q => !q.includes('stars:>20')));
+  } finally { globalThis.fetch = original; }
 });
 test('backlink requirement is retained explicitly', () => {
   const p = compile('自托管的笔记软件，支持双链');
