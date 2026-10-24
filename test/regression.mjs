@@ -93,6 +93,43 @@ test('unknown ideas preserve custom queries and GitHub README-only candidates', 
   const repo = { full_name: 'a/scoreboard', description: 'Badminton scoreboard', topics: [], stars: 20, size: 50, issues: 0 };
   assert.equal(mergeAndRank([{ label: '自定义', items: [repo] }], p).results.length, 1);
 });
+
+test('a recognized language cannot swallow an unknown Chinese purpose', () => {
+  const p = compile('python 羽毛球计分工具');
+  assert.equal(p.lang, 'Python');
+  assert.ok(p.fallback);
+  assert.ok(p.variants[0].q.includes('羽毛球计分'));
+  assert.ok(p.variants.every(v => v.q.includes('language:Python')));
+  const repo = { full_name: 'fixture/scoreboard', description: 'Badminton scoreboard', topics: [], stars: 2, size: 80, issues: 0, lang: 'Python' };
+  assert.equal(mergeAndRank([{ label: '原话直搜', items: [repo] }], p, { lang: 'Python' }).results.length, 1);
+});
+
+test('unknown Chinese details survive known ecosystems and partial concept matches', () => {
+  for (const query of ['dsh 捏脸插件', 'dsh 桌宠捏脸插件']) {
+    const p = compile(query, { maxQueries: 2, lang: 'TypeScript' });
+    assert.ok(p.unmappedTerms.includes('捏脸'));
+    assert.ok(p.variants[0].q.includes('dsh'));
+    assert.ok(p.variants[0].q.includes('捏脸'));
+    assert.ok(p.variants.every(v => v.q.includes('language:TypeScript')));
+    assert.ok(p.variants.length <= 2);
+  }
+});
+
+test('mixed-language fallback returns README candidates and explains original-word retrieval', async () => {
+  const original = globalThis.fetch;
+  globalThis.fetch = async url => {
+    const q = new URL(url).searchParams.get('q');
+    assert.ok(q.includes('羽毛球计分'));
+    assert.ok(q.includes('language:Python'));
+    return new Response(JSON.stringify({total_count: 1, items: [{full_name: 'fixture/readme-scoreboard', description: 'Sports scoreboard', language: 'Python', stargazers_count: 1, size: 80}]}));
+  };
+  try {
+    const result = await find('python 羽毛球计分工具', { lang: 'Python' });
+    assert.equal(result.results[0].full_name, 'fixture/readme-scoreboard');
+    assert.ok(result.warnings.some(w => w.includes('已保留原词检索') && w.includes('羽毛球计分')));
+    assert.ok(result.plan.unmappedTerms.includes('羽毛球计分'));
+  } finally { globalThis.fetch = original; }
+});
 test('unrelated repositories with empty descriptions are retained', () => {
   assert.equal(dedupe([{ full_name: 'a/server', stars: 1 }, { full_name: 'b/server', stars: 20 }]).length, 2);
 });

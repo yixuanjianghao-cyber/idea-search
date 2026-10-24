@@ -7,7 +7,7 @@ from datetime import datetime
 from zipfile import ZipFile, ZIP_DEFLATED
 
 ROOT = Path(__file__).resolve().parent.parent
-FILES = ('README.md', 'CHANGELOG.md', 'CONTRIBUTING.md', 'SECURITY.md', 'LICENSE',
+FILES = ('README.md', 'AGENTS.md', 'CHANGELOG.md', 'CONTRIBUTING.md', 'SECURITY.md', 'LICENSE',
          'THIRD_PARTY_NOTICES.md', '开始使用.txt', '.gitignore', 'package.json',
          'requirements.txt', 'requirements-build.txt', 'build.ps1', 'server.mjs',
          'config.mjs', 'cli.mjs')

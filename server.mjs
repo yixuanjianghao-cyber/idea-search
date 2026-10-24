@@ -101,7 +101,7 @@ const server = createServer(async (req, res) => {
     }
     if (url.pathname === '/api/health') {
       return send(res, 200, {
-        ok: true, app: 'idea-search', version: '2.8.1',
+        ok: true, app: 'idea-search', version: '2.8.2',
         token: tokenPresent(),
         tokenMasked: maskedToken(),
         configPath,
@@ -230,7 +230,7 @@ server.on('clientError', (err, socket) => {
 
 server.listen(PORT, HOST, () => {
   const t = readToken();
-  console.log(`Idea Search 2.8.1  http://${HOST}:${PORT}`);
+  console.log(`Idea Search 2.8.2  http://${HOST}:${PORT}`);
   console.log(`token: ${t ? '已配置 ' + maskedToken() : '未配置（10 次/分，代码搜索不可用）'}`);
   console.log(`配置: ${configPath}`);
 });

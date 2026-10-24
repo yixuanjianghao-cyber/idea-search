@@ -43,7 +43,7 @@ def build_app() -> QApplication:
     app.setApplicationName("IdeaSearch")
     app.setApplicationDisplayName("想法搜索")
     app.setOrganizationName("IdeaSearch")
-    app.setApplicationVersion("2.8.1")
+    app.setApplicationVersion("2.8.2")
     asset_root = Path(getattr(sys, "_MEIPASS", HERE.parent))
     app.setWindowIcon(QIcon(str(asset_root / "assets" / "app.ico")))
     app.setStyle("Fusion")

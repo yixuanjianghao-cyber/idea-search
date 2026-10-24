@@ -50,7 +50,7 @@ class Handler(BaseHTTPRequestHandler):
             rows = [{**REPO, 'full_name': f'example/{period}-{i}', 'trending_rank':i+1, 'trending_period':period, 'stars_period':100-i} for i in range(10)]
             self.send_response(200); self.end_headers(); self.wfile.write(json.dumps({'items':rows, 'period':period, 'fetchedAt':int(time.time()*1000), 'sourceUrl':'https://github.com/trending?since='+period}).encode()); return
         if self.path.startswith('/api/health'):
-            body = json.dumps({'ok': True, 'app': 'idea-search', 'version': '2.8.1', 'quota': {}}).encode()
+            body = json.dumps({'ok': True, 'app': 'idea-search', 'version': '2.8.2', 'quota': {}}).encode()
             self.send_response(200); self.end_headers(); self.wfile.write(body); return
         if self.path.startswith('/api/discover'):
             if 'network-error' in self.path:
